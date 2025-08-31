@@ -1,0 +1,1557 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HR Dashboard</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #4361ee;
+            --primary-light: #e6ecff;
+            --secondary: #3a0ca3;
+            --accent: #7209b7;
+            --light: #f8f9fa;
+            --dark: #212529;
+            --success: #4cc9f0;
+            --warning: #f72585;
+            --info: #4895ef;
+            --card-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            --transition: all 0.3s ease;
+            --border-radius: 16px;
+            --sidebar-width: 250px;
+            --header-height: 70px;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            background: #f5f7fa;
+            min-height: 100vh;
+            margin: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: var(--dark);
+            display: flex;
+        }
+        
+        /* Sidebar */
+        .sidebar {
+            width: var(--sidebar-width);
+            background: white;
+            height: 100vh;
+            position: fixed;
+            left: 0;
+            top: 0;
+            box-shadow: var(--card-shadow);
+            display: flex;
+            flex-direction: column;
+            z-index: 100;
+            transition: var(--transition);
+        }
+        
+        .sidebar-header {
+            padding: 24px;
+            display: flex;
+            align-items: center;
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+        }
+        
+        .logo {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--primary);
+        }
+        
+        .logo span {
+            color: var(--secondary);
+        }
+        
+        .sidebar-menu {
+            padding: 20px 0;
+            flex: 1;
+        }
+        
+        .menu-item {
+            display: flex;
+            align-items: center;
+            padding: 14px 24px;
+            color: #64748b;
+            font-weight: 500;
+            transition: var(--transition);
+            cursor: pointer;
+        }
+        
+        .menu-item:hover, .menu-item.active {
+            background: var(--primary-light);
+            color: var(--primary);
+        }
+        
+        .menu-item i {
+            margin-right: 12px;
+            font-size: 18px;
+            width: 24px;
+            text-align: center;
+        }
+        
+        .sidebar-footer {
+            padding: 20px;
+            border-top: 1px solid rgba(0,0,0,0.05);
+            display: flex;
+            align-items: center;
+        }
+        
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--primary-light);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary);
+            font-size: 18px;
+            margin-right: 12px;
+        }
+        
+        .user-info h4 {
+            font-size: 14px;
+            margin-bottom: 2px;
+        }
+        
+        .user-info p {
+            font-size: 12px;
+            color: #64748b;
+        }
+        
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            margin-left: var(--sidebar-width);
+            padding: 20px;
+            transition: var(--transition);
+        }
+        
+        .header {
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--card-shadow);
+            padding: 16px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+        
+        .page-title h1 {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--dark);
+        }
+        
+        .page-title p {
+            color: #64748b;
+            font-size: 14px;
+            margin-top: 4px;
+        }
+        
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+        
+        .search-box {
+            position: relative;
+        }
+        
+        .search-box input {
+            padding: 10px 16px 10px 40px;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+            background: #f8fafc;
+            font-size: 14px;
+            width: 240px;
+            transition: var(--transition);
+        }
+        
+        .search-box i {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #94a3b8;
+        }
+        
+        .search-box input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.1);
+        }
+        
+        .notifications {
+            position: relative;
+        }
+        
+        .icon-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #64748b;
+            background: #f8fafc;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        
+        .icon-btn:hover {
+            background: var(--primary-light);
+            color: var(--primary);
+        }
+        
+        .badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: var(--warning);
+            color: white;
+            font-size: 11px;
+            font-weight: bold;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        /* Dashboard Content */
+        .dashboard-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 24px;
+            margin-bottom: 24px;
+        }
+        
+        .card {
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--card-shadow);
+            padding: 24px;
+            transition: var(--transition);
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+        
+        .stat-card {
+            display: flex;
+            align-items: center;
+        }
+        
+        .stat-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            margin-right: 16px;
+        }
+        
+        .employees-icon {
+            background: rgba(67, 97, 238, 0.1);
+            color: var(--primary);
+        }
+        
+        .requests-icon {
+            background: rgba(114, 9, 183, 0.1);
+            color: var(--accent);
+        }
+        
+        .notifications-icon {
+            background: rgba(247, 37, 133, 0.1);
+            color: var(--warning);
+        }
+        
+        .settlement-icon {
+            background: rgba(76, 201, 240, 0.1);
+            color: var(--success);
+        }
+        
+        .stat-info h3 {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+        
+        .stat-info p {
+            color: #64748b;
+            font-size: 14px;
+        }
+        
+        /* Section Styling */
+        .section {
+            display: none;
+        }
+        
+        .section.active {
+            display: block;
+            animation: fadeIn 0.4s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+        
+        .section-title {
+            color: var(--dark);
+            font-size: 20px;
+            font-weight: 600;
+        }
+        
+        /* Table Styling */
+        .table-container {
+            overflow-x: auto;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+            min-width: 900px;
+        }
+        
+        th, td {
+            padding: 16px;
+            text-align: left;
+            border-bottom: 1px solid #f1f5f9;
+        }
+        
+        th {
+            background: #f8fafc;
+            color: #64748b;
+            font-weight: 600;
+            position: sticky;
+            top: 0;
+        }
+        
+        tr:nth-child(even) {
+            background: #fafbfc;
+        }
+        
+        tr:hover {
+            background: #f1f5f9;
+        }
+        
+        .action-btn {
+            padding: 8px 12px;
+            border-radius: 6px;
+            border: none;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: var(--transition);
+        }
+        
+        .view-btn {
+            background: var(--info);
+            color: white;
+        }
+        
+        .edit-btn {
+            background: var(--accent);
+            color: white;
+        }
+        
+        .delete-btn {
+            background: var(--warning);
+            color: white;
+        }
+        
+        .action-btn:hover {
+            opacity: 0.85;
+        }
+        
+        /* Form Styling */
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: var(--dark);
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 14px 16px;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 15px;
+            transition: var(--transition);
+            background: #f8fafc;
+        }
+        
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.1);
+            background: white;
+        }
+        
+        .btn {
+            padding: 12px 24px;
+            border-radius: 8px;
+            border: none;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: var(--secondary);
+            transform: translateY(-2px);
+        }
+        
+        .notification {
+            padding: 16px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: none;
+        }
+        
+        .notification.success {
+            background: #ecfdf5;
+            color: #047857;
+            border-left: 4px solid #10b981;
+        }
+        
+        .notification.error {
+            background: #fef2f2;
+            color: #b91c1c;
+            border-left: 4px solid #ef4444;
+        }
+        
+        /* Activity List */
+        .activity-list {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+        
+        .activity-item {
+            display: flex;
+            align-items: flex-start;
+            padding: 16px;
+            border-radius: 8px;
+            background: #f8fafc;
+            transition: var(--transition);
+        }
+        
+        .activity-item:hover {
+            background: #f1f5f9;
+        }
+        
+        .activity-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--primary-light);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 16px;
+            color: var(--primary);
+        }
+        
+        .activity-content {
+            flex: 1;
+        }
+        
+        .activity-content h4 {
+            margin-bottom: 4px;
+            font-size: 15px;
+        }
+        
+        .activity-content p {
+            color: #64748b;
+            font-size: 14px;
+            margin-bottom: 4px;
+        }
+        
+        .activity-content span {
+            font-size: 12px;
+            color: #94a3b8;
+        }
+        
+        /* Mobile Navigation */
+        .mobile-nav {
+            display: none;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: white;
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.07);
+            z-index: 100;
+            padding: 8px;
+        }
+        
+        .mobile-nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: #64748b;
+            font-size: 12px;
+            cursor: pointer;
+            transition: var(--transition);
+            padding: 8px;
+            border-radius: 8px;
+            flex: 1;
+        }
+        
+        .mobile-nav-item.active {
+            color: var(--primary);
+            background: var(--primary-light);
+        }
+        
+        .mobile-nav-item i {
+            font-size: 20px;
+            margin-bottom: 4px;
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 1024px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+            
+            .sidebar.active {
+                transform: translateX(0);
+            }
+            
+            .main-content {
+                margin-left: 0;
+            }
+            
+            .mobile-nav {
+                display: flex;
+            }
+            
+            .menu-toggle {
+                display: block;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .dashboard-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .search-box input {
+                width: 180px;
+            }
+            
+            .header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 16px;
+            }
+            
+            .header-actions {
+                width: 100%;
+                justify-content: space-between;
+            }
+        }
+        
+        @media (max-width: 576px) {
+            .main-content {
+                padding: 16px;
+            }
+            
+            .card {
+                padding: 20px;
+            }
+            
+            .search-box {
+                display: none;
+            }
+            
+            .stat-card {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .stat-icon {
+                margin-right: 0;
+                margin-bottom: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <div class="logo">HR<span>Pro</span></div>
+        </div>
+        
+        <div class="sidebar-menu">
+            <div class="menu-item active" data-section="dashboard">
+                <i class="fa-solid fa-gauge-high"></i>
+                <span>Dashboard</span>
+            </div>
+            <div class="menu-item" data-section="employee-list">
+                <i class="fa-solid fa-users"></i>
+                <span>Employees</span>
+            </div>
+            <div class="menu-item" data-section="add-employee">
+                <i class="fa-solid fa-user-plus"></i>
+                <span>Add Employee</span>
+            </div>
+            <div class="menu-item" data-section="notifications">
+                <i class="fa-regular fa-bell"></i>
+                <span>Notifications</span>
+            </div>
+            <div class="menu-item" data-section="prepayment">
+                <i class="fa-solid fa-money-bill-wave"></i>
+                <span>Prepayment</span>
+            </div>
+            <div class="menu-item" data-section="settlement">
+                <i class="fa-solid fa-calculator"></i>
+                <span>Settlement</span>
+            </div>
+        </div>
+        
+        <div class="sidebar-footer">
+            <div class="user-avatar">
+                <i class="fa-solid fa-user-tie"></i>
+            </div>
+            <div class="user-info">
+                <h4>Aditya Raj</h4>
+                <p>HR Manager</p>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="header">
+            <div class="page-title">
+                <h1>HR Dashboard</h1>
+                <p id="current-date">Monday, August 31, 2025</p>
+            </div>
+            
+            <div class="header-actions">
+                <div class="search-box">
+                    <i class="fa-solid fa-search"></i>
+                    <input type="text" placeholder="Search...">
+                </div>
+                
+                <div class="notifications">
+                    <div class="icon-btn">
+                        <i class="fa-regular fa-bell"></i>
+                    </div>
+                    <div class="badge" id="hr-noti-count">3</div>
+                </div>
+                
+                <div class="icon-btn menu-toggle">
+                    <i class="fa-solid fa-bars"></i>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Dashboard Section -->
+        <div id="section-dashboard" class="section active">
+            <div class="dashboard-content">
+                <div class="card stat-card">
+                    <div class="stat-icon employees-icon">
+                        <i class="fa-solid fa-users"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3 id="total-employees">0</h3>
+                        <p>Total Employees</p>
+                    </div>
+                </div>
+                
+                <div class="card stat-card">
+                    <div class="stat-icon requests-icon">
+                        <i class="fa-solid fa-money-bill-wave"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3 id="pending-requests">0</h3>
+                        <p>Pending Requests</p>
+                    </div>
+                </div>
+                
+                <div class="card stat-card">
+                    <div class="stat-icon notifications-icon">
+                        <i class="fa-regular fa-bell"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3 id="total-notifications">0</h3>
+                        <p>Notifications</p>
+                    </div>
+                </div>
+                
+                <div class="card stat-card">
+                    <div class="stat-icon settlement-icon">
+                        <i class="fa-solid fa-calculator"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3 id="pending-settlements">0</h3>
+                        <p>Pending Settlements</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card">
+                <div class="section-header">
+                    <h2 class="section-title">Recent Activities</h2>
+                </div>
+                
+                <div class="activity-list" id="recent-activities">
+                    <!-- Activities will be populated by JavaScript -->
+                </div>
+            </div>
+        </div>
+        
+        <!-- Employee List Section -->
+        <div id="section-employee-list" class="section">
+            <div class="section-header">
+                <h2 class="section-title">Employee Management</h2>
+                <button class="btn btn-primary" id="add-employee-btn">
+                    <i class="fa-solid fa-plus"></i> Add Employee
+                </button>
+            </div>
+            
+            <div class="card">
+                <div class="table-container">
+                    <table id="employee-table">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Mobile</th>
+                                <th>Department</th>
+                                <th>Position</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Employees will be populated by JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Add Employee Section -->
+        <div id="section-add-employee" class="section">
+            <div class="section-header">
+                <h2 class="section-title">Add New Employee</h2>
+            </div>
+            
+            <div class="card">
+                <div class="notification" id="hr-notification"></div>
+                
+                <form class="add-employee-form" id="add-employee-form">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="emp-name">Full Name</label>
+                            <input type="text" id="emp-name" class="form-control" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="emp-email">Email Address</label>
+                            <input type="email" id="emp-email" class="form-control" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="emp-password">Password</label>
+                            <input type="password" id="emp-password" class="form-control" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="emp-mobile">Mobile Number</label>
+                            <input type="text" id="emp-mobile" class="form-control" required pattern="[0-9]{10}">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="emp-department">Department</label>
+                            <select id="emp-department" class="form-control" required>
+                                <option value="">Select Department</option>
+                                <option value="Development">Development</option>
+                                <option value="Marketing">Marketing</option>
+                                <option value="Sales">Sales</option>
+                                <option value="HR">Human Resources</option>
+                                <option value="Finance">Finance</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="emp-position">Position</label>
+                            <input type="text" id="emp-position" class="form-control" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="emp-salary">Salary (₹)</label>
+                            <input type="number" id="emp-salary" class="form-control" required min="0">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="emp-join-date">Join Date</label>
+                            <input type="date" id="emp-join-date" class="form-control" required>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="emp-address">Address</label>
+                        <textarea id="emp-address" class="form-control" rows="3" required></textarea>
+                    </div>
+                    
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="emp-aadhaar">Aadhaar Number</label>
+                            <input type="text" id="emp-aadhaar" class="form-control" required pattern="[0-9]{12}">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="emp-pan">PAN Number</label>
+                            <input type="text" id="emp-pan" class="form-control" required pattern="[A-Z]{5}[0-9]{4}[A-Z]{1}">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="emp-paid-leave-allowed">Paid Leave Allowed (Year)</label>
+                            <input type="number" id="emp-paid-leave-allowed" class="form-control" required min="0" value="18">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="emp-paid-leave-taken">Paid Leave Taken</label>
+                            <input type="number" id="emp-paid-leave-taken" class="form-control" required min="0" value="0">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="emp-unpaid-leave">Unpaid Leave</label>
+                            <input type="number" id="emp-unpaid-leave" class="form-control" required min="0" value="0">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="emp-prepayment">Prepayment (₹)</label>
+                            <input type="number" id="emp-prepayment" class="form-control" required min="0" value="0">
+                        </div>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fa-solid fa-plus"></i> Add Employee
+                    </button>
+                </form>
+            </div>
+        </div>
+        
+        <!-- Notifications Section -->
+        <div id="section-notifications" class="section">
+            <div class="section-header">
+                <h2 class="section-title">Employee Notifications</h2>
+            </div>
+            <div class="card">
+                <div class="notification-list" id="notification-list">
+                    <!-- Notifications will be populated by JavaScript -->
+                </div>
+            </div>
+        </div>
+        
+        <!-- Prepayment Section -->
+        <div id="section-prepayment" class="section">
+            <div class="section-header">
+                <h2 class="section-title">Prepayment Requests</h2>
+            </div>
+            <div class="card">
+                <div class="prepay-requests" id="prepayment-requests">
+                    <!-- Prepayment requests will be populated by JavaScript -->
+                </div>
+            </div>
+        </div>
+        
+        <!-- Settlement Section -->
+        <div id="section-settlement" class="section">
+            <div class="section-header">
+                <h2 class="section-title">Settlement Calculation</h2>
+            </div>
+            <div class="card">
+                <form id="settlement-form" class="form-grid">
+                    <div class="form-group">
+                        <label for="settlement-emp">Select Employee</label>
+                        <select id="settlement-emp" class="form-control" required>
+                            <option value="">Select Employee</option>
+                            <!-- Employees will be populated by JavaScript -->
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="settlement-month">Month</label>
+                        <input type="month" id="settlement-month" class="form-control" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label style="visibility: hidden;">Calculate</label>
+                        <button type="submit" class="btn btn-primary">Calculate</button>
+                    </div>
+                </form>
+                
+                <div class="settlement-result" id="settlement-result">
+                    <!-- Settlement result will be populated by JavaScript -->
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Mobile Navigation -->
+    <div class="mobile-nav">
+        <div class="mobile-nav-item active" data-section="dashboard">
+            <i class="fa-solid fa-gauge-high"></i>
+            <span>Dashboard</span>
+        </div>
+        <div class="mobile-nav-item" data-section="employee-list">
+            <i class="fa-solid fa-users"></i>
+            <span>Employees</span>
+        </div>
+        <div class="mobile-nav-item" data-section="add-employee">
+            <i class="fa-solid fa-user-plus"></i>
+            <span>Add</span>
+        </div>
+        <div class="mobile-nav-item" data-section="notifications">
+            <i class="fa-regular fa-bell"></i>
+            <span>Alerts</span>
+        </div>
+        <div class="mobile-nav-item" data-section="prepayment">
+            <i class="fa-solid fa-money-bill-wave"></i>
+            <span>Prepay</span>
+        </div>
+    </div>
+
+    <script>
+        // Data storage
+        let employees = JSON.parse(localStorage.getItem('hr_employees')) || [];
+        let notifications = JSON.parse(localStorage.getItem('hr_notifications')) || [];
+        let prepaymentRequests = JSON.parse(localStorage.getItem('hr_prepayment_requests')) || [];
+        let activities = JSON.parse(localStorage.getItem('hr_activities')) || [];
+
+        // DOM Elements
+        const mainContent = document.querySelector('.main-content');
+        const menuItems = document.querySelectorAll('.menu-item');
+        const mobileNavItems = document.querySelectorAll('.mobile-nav-item');
+        const sections = document.querySelectorAll('.section');
+        const addEmployeeForm = document.getElementById('add-employee-form');
+        const settlementForm = document.getElementById('settlement-form');
+        const employeeTable = document.getElementById('employee-table');
+        const notificationList = document.getElementById('notification-list');
+        const prepaymentRequestsList = document.getElementById('prepayment-requests');
+        const settlementEmpSelect = document.getElementById('settlement-emp');
+        const settlementResult = document.getElementById('settlement-result');
+        const hrNotification = document.getElementById('hr-notification');
+        const recentActivities = document.getElementById('recent-activities');
+        const menuToggle = document.querySelector('.menu-toggle');
+        const sidebar = document.querySelector('.sidebar');
+
+        // Initialize the dashboard
+        function initDashboard() {
+            // Set current date
+            const now = new Date();
+            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            document.getElementById('current-date').textContent = now.toLocaleDateString('en-US', options);
+            
+            // Update statistics
+            updateStatistics();
+            
+            // Render data
+            renderEmployeeTable();
+            renderNotifications();
+            renderPrepaymentRequests();
+            populateSettlementEmployees();
+            renderRecentActivities();
+            
+            // Set up event listeners
+            setupEventListeners();
+        }
+
+        // Set up event listeners
+        function setupEventListeners() {
+            // Navigation
+            menuItems.forEach(item => {
+                item.addEventListener('click', function() {
+                    const section = this.getAttribute('data-section');
+                    navigateToSection(section);
+                });
+            });
+            
+            // Mobile navigation
+            mobileNavItems.forEach(item => {
+                item.addEventListener('click', function() {
+                    const section = this.getAttribute('data-section');
+                    navigateToSection(section);
+                });
+            });
+
+            // Add employee form
+            addEmployeeForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                addEmployee();
+            });
+
+            // Settlement form
+            settlementForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                calculateSettlement();
+            });
+
+            // Add employee button
+            document.getElementById('add-employee-btn').addEventListener('click', function() {
+                navigateToSection('add-employee');
+            });
+            
+            // Menu toggle
+            menuToggle.addEventListener('click', function() {
+                sidebar.classList.toggle('active');
+            });
+        }
+
+        // Navigate to section
+        function navigateToSection(section) {
+            // Update navigation
+            menuItems.forEach(item => {
+                if (item.getAttribute('data-section') === section) {
+                    item.classList.add('active');
+                } else {
+                    item.classList.remove('active');
+                }
+            });
+            
+            mobileNavItems.forEach(item => {
+                if (item.getAttribute('data-section') === section) {
+                    item.classList.add('active');
+                } else {
+                    item.classList.remove('active');
+                }
+            });
+
+            // Show section
+            sections.forEach(sec => {
+                if (sec.id === `section-${section}`) {
+                    sec.classList.add('active');
+                } else {
+                    sec.classList.remove('active');
+                }
+            });
+
+            // Scroll to top
+            mainContent.scrollTop = 0;
+            
+            // Close sidebar on mobile after selection
+            if (window.innerWidth < 1024) {
+                sidebar.classList.remove('active');
+            }
+        }
+
+        // Add new employee
+        function addEmployee() {
+            const name = document.getElementById('emp-name').value.trim();
+            const email = document.getElementById('emp-email').value.trim();
+            const password = document.getElementById('emp-password').value;
+            const mobile = document.getElementById('emp-mobile').value.trim();
+            const department = document.getElementById('emp-department').value;
+            const position = document.getElementById('emp-position').value.trim();
+            const salary = parseFloat(document.getElementById('emp-salary').value);
+            const joinDate = document.getElementById('emp-join-date').value;
+            const address = document.getElementById('emp-address').value.trim();
+            const aadhaar = document.getElementById('emp-aadhaar').value.trim();
+            const pan = document.getElementById('emp-pan').value.trim();
+            const paidLeaveAllowed = parseInt(document.getElementById('emp-paid-leave-allowed').value);
+            const paidLeaveTaken = parseInt(document.getElementById('emp-paid-leave-taken').value);
+            const unpaidLeave = parseInt(document.getElementById('emp-unpaid-leave').value);
+            const prepayment = parseFloat(document.getElementById('emp-prepayment').value);
+
+            // Validation
+            if (!name || !email || !password || !mobile || !department || !position || !salary || !joinDate || !address || !aadhaar || !pan) {
+                showNotification('Please fill all required fields!', 'error');
+                return;
+            }
+
+            if (!/^\d{10}$/.test(mobile)) {
+                showNotification('Mobile must be 10 digits!', 'error');
+                return;
+            }
+
+            if (!/^\d{12}$/.test(aadhaar)) {
+                showNotification('Aadhaar must be 12 digits!', 'error');
+                return;
+            }
+
+            if (!/^[A-Z]{5}[0-9]{4}[A-Z]{1}$/.test(pan)) {
+                showNotification('PAN format invalid!', 'error');
+                return;
+            }
+
+            // Generate employee code
+            const code = generateCode(name, email);
+
+            // Add employee to array
+            employees.push({
+                name, email, password, mobile, department, position, salary, joinDate,
+                address, aadhaar, pan, paidLeaveAllowed, paidLeaveTaken, unpaidLeave,
+                prepayment, code, status: 'Active'
+            });
+
+            // Save to localStorage
+            localStorage.setItem('hr_employees', JSON.stringify(employees));
+
+            // Add activity
+            addActivity(`New employee ${name} added with code ${code}`);
+
+            // Show success message
+            showNotification(`Employee added successfully! Code: ${code}`, 'success');
+
+            // Reset form
+            addEmployeeForm.reset();
+
+            // Update UI
+            updateStatistics();
+            renderEmployeeTable();
+            populateSettlementEmployees();
+            renderRecentActivities();
+
+            // Navigate to employee list
+            setTimeout(() => navigateToSection('employee-list'), 1500);
+        }
+
+        // Generate employee code
+        function generateCode(name, email) {
+            let initials = name.split(' ').map(w => w.charAt(0)).join('').toUpperCase();
+            let timestamp = Date.now().toString().slice(-6);
+            return initials + '-' + timestamp;
+        }
+
+        // Render employee table
+        function renderEmployeeTable() {
+            const tbody = employeeTable.querySelector('tbody');
+            tbody.innerHTML = '';
+
+            if (employees.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; padding: 20px;">No employees found</td></tr>';
+                return;
+            }
+
+            employees.forEach((emp, index) => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${emp.name}</td>
+                    <td>${emp.email}</td>
+                    <td>${emp.mobile}</td>
+                    <td>${emp.department}</td>
+                    <td>${emp.position}</td>
+                    <td><span class="status-badge ${emp.status.toLowerCase()}">${emp.status}</span></td>
+                    <td>
+                        <button class="action-btn view-btn" data-index="${index}">View</button>
+                        <button class="action-btn edit-btn" data-index="${index}">Edit</button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+
+            // Add event listeners to buttons
+            tbody.querySelectorAll('.view-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const index = this.getAttribute('data-index');
+                    viewEmployee(index);
+                });
+            });
+
+            tbody.querySelectorAll('.edit-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const index = this.getAttribute('data-index');
+                    editEmployee(index);
+                });
+            });
+        }
+
+        // View employee details
+        function viewEmployee(index) {
+            // Implementation for viewing employee details
+            alert(`Viewing details for ${employees[index].name}`);
+        }
+
+        // Edit employee details
+        function editEmployee(index) {
+            // Implementation for editing employee details
+            alert(`Editing details for ${employees[index].name}`);
+        }
+
+        // Render notifications
+        function renderNotifications() {
+            notificationList.innerHTML = '';
+
+            if (notifications.length === 0) {
+                notificationList.innerHTML = '<div class="activity-item"><div class="activity-content">No notifications</div></div>';
+                return;
+            }
+
+            notifications.forEach(noti => {
+                const div = document.createElement('div');
+                div.className = 'activity-item';
+                div.innerHTML = `
+                    <div class="activity-icon">
+                        <i class="fa-solid fa-bell"></i>
+                    </div>
+                    <div class="activity-content">
+                        <h4>${noti.title}</h4>
+                        <p>${noti.message}</p>
+                        <span>${formatDate(noti.date)}</span>
+                    </div>
+                `;
+                notificationList.appendChild(div);
+            });
+        }
+
+        // Render prepayment requests
+        function renderPrepaymentRequests() {
+            prepaymentRequestsList.innerHTML = '';
+
+            if (prepaymentRequests.length === 0) {
+                prepaymentRequestsList.innerHTML = '<div class="activity-item"><div class="activity-content">No prepayment requests</div></div>';
+                return;
+            }
+
+            prepaymentRequests.forEach((req, index) => {
+                const div = document.createElement('div');
+                div.className = 'activity-item';
+                div.innerHTML = `
+                    <div class="activity-icon">
+                        <i class="fa-solid fa-money-bill-wave"></i>
+                    </div>
+                    <div class="activity-content">
+                        <h4>${req.employeeName}</h4>
+                        <p>${req.department} • ${req.position}</p>
+                        <span class="amount">₹${req.amount.toLocaleString()}</span>
+                    </div>
+                    <div class="request-actions">
+                        <button class="action-btn approve-btn" data-index="${index}">Approve</button>
+                        <button class="action-btn reject-btn" data-index="${index}">Reject</button>
+                    </div>
+                `;
+                prepaymentRequestsList.appendChild(div);
+            });
+
+            // Add event listeners to buttons
+            prepaymentRequestsList.querySelectorAll('.approve-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const index = this.getAttribute('data-index');
+                    processPrepaymentRequest(index, true);
+                });
+            });
+
+            prepaymentRequestsList.querySelectorAll('.reject-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const index = this.getAttribute('data-index');
+                    processPrepaymentRequest(index, false);
+                });
+            });
+        }
+
+        // Process prepayment request
+        function processPrepaymentRequest(index, approved) {
+            const request = prepaymentRequests[index];
+            
+            if (approved) {
+                // Find employee and update prepayment amount
+                const employeeIndex = employees.findIndex(emp => emp.code === request.employeeCode);
+                if (employeeIndex !== -1) {
+                    employees[employeeIndex].prepayment += request.amount;
+                    localStorage.setItem('hr_employees', JSON.stringify(employees));
+                    
+                    // Add activity
+                    addActivity(`Prepayment of ₹${request.amount} approved for ${request.employeeName}`);
+                    
+                    showNotification(`Prepayment approved for ${request.employeeName}`, 'success');
+                }
+            } else {
+                // Add activity
+                addActivity(`Prepayment of ₹${request.amount} rejected for ${request.employeeName}`);
+                
+                showNotification(`Prepayment rejected for ${request.employeeName}`, 'error');
+            }
+            
+            // Remove the request
+            prepaymentRequests.splice(index, 1);
+            localStorage.setItem('hr_prepayment_requests', JSON.stringify(prepaymentRequests));
+            
+            // Update UI
+            updateStatistics();
+            renderPrepaymentRequests();
+            renderRecentActivities();
+        }
+
+        // Populate settlement employees dropdown
+        function populateSettlementEmployees() {
+            settlementEmpSelect.innerHTML = '<option value="">Select Employee</option>';
+            
+            employees.forEach((emp, index) => {
+                const option = document.createElement('option');
+                option.value = index;
+                option.textContent = `${emp.name} (${emp.code})`;
+                settlementEmpSelect.appendChild(option);
+            });
+        }
+
+        // Calculate settlement
+        function calculateSettlement() {
+            const empIndex = settlementEmpSelect.value;
+            const month = document.getElementById('settlement-month').value;
+            
+            if (!empIndex || !month) {
+                showNotification('Please select an employee and month', 'error');
+                return;
+            }
+            
+            const employee = employees[empIndex];
+            const workingDays = 22; // Standard working days in a month
+            const deductionPerDay = employee.salary / workingDays;
+            const totalDeduction = employee.unpaidLeave * deductionPerDay;
+            const netSalary = employee.salary - totalDeduction - employee.prepayment;
+            
+            settlementResult.innerHTML = `
+                <div class="card">
+                    <h4>Settlement Details for ${employee.name}</h4>
+                    <div class="result-grid">
+                        <div class="result-item">
+                            <span>Basic Salary</span>
+                            <span>₹${employee.salary.toLocaleString()}</span>
+                        </div>
+                        <div class="result-item">
+                            <span>Unpaid Leave Deduction (${employee.unpaidLeave} days)</span>
+                            <span>-₹${totalDeduction.toFixed(2)}</span>
+                        </div>
+                        <div class="result-item">
+                            <span>Prepayment Deduction</span>
+                            <span>-₹${employee.prepayment.toLocaleString()}</span>
+                        </div>
+                        <div class="result-item total">
+                            <span>Net Salary</span>
+                            <span>₹${netSalary.toFixed(2)}</span>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            // Add activity
+            addActivity(`Settlement calculated for ${employee.name} for ${month}`);
+            renderRecentActivities();
+        }
+
+        // Render recent activities
+        function renderRecentActivities() {
+            recentActivities.innerHTML = '';
+            
+            if (activities.length === 0) {
+                recentActivities.innerHTML = '<div class="activity-item"><div class="activity-content">No recent activities</div></div>';
+                return;
+            }
+            
+            // Show only the latest 5 activities
+            const recent = activities.slice(-5).reverse();
+            
+            recent.forEach(activity => {
+                const div = document.createElement('div');
+                div.className = 'activity-item';
+                div.innerHTML = `
+                    <div class="activity-icon">
+                        <i class="fa-solid fa-history"></i>
+                    </div>
+                    <div class="activity-content">
+                        <p>${activity.message}</p>
+                        <span>${formatDate(activity.date)}</span>
+                    </div>
+                `;
+                recentActivities.appendChild(div);
+            });
+        }
+
+        // Add activity
+        function addActivity(message) {
+            activities.push({
+                message,
+                date: new Date().toISOString()
+            });
+            
+            // Keep only the last 50 activities
+            if (activities.length > 50) {
+                activities = activities.slice(-50);
+            }
+            
+            localStorage.setItem('hr_activities', JSON.stringify(activities));
+        }
+
+        // Update statistics
+        function updateStatistics() {
+            document.getElementById('total-employees').textContent = employees.length;
+            document.getElementById('pending-requests').textContent = prepaymentRequests.length;
+            document.getElementById('total-notifications').textContent = notifications.length;
+            document.getElementById('pending-settlements').textContent = '0'; // This would be calculated in a real app
+            document.getElementById('hr-noti-count').textContent = notifications.length;
+        }
+
+        // Show notification
+        function showNotification(message, type) {
+            hrNotification.textContent = message;
+            hrNotification.className = `notification ${type}`;
+            hrNotification.style.display = 'block';
+            
+            setTimeout(() => {
+                hrNotification.style.display = 'none';
+            }, 4000);
+        }
+
+        // Format date
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            return date.toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+        }
+
+        // Initialize the dashboard when the page loads
+        document.addEventListener('DOMContentLoaded', initDashboard);
+
+        // Add some sample data for demonstration
+        if (employees.length === 0) {
+            employees = [
+                {
+                    name: 'Rahul Sharma',
+                    email: 'rahul@example.com',
+                    password: 'password123',
+                    mobile: '9876543210',
+                    department: 'Development',
+                    position: 'Software Engineer',
+                    salary: 50000,
+                    joinDate: '2023-01-15',
+                    address: '123 Main St, Bangalore',
+                    aadhaar: '123456789012',
+                    pan: 'ABCDE1234F',
+                    paidLeaveAllowed: 18,
+                    paidLeaveTaken: 3,
+                    unpaidLeave: 2,
+                    prepayment: 5000,
+                    code: 'RS-123456',
+                    status: 'Active'
+                },
+                {
+                    name: 'Priya Singh',
+                    email: 'priya@example.com',
+                    password: 'password123',
+                    mobile: '8765432109',
+                    department: 'Marketing',
+                    position: 'Marketing Manager',
+                    salary: 60000,
+                    joinDate: '2022-08-10',
+                    address: '456 Park Ave, Mumbai',
+                    aadhaar: '234567890123',
+                    pan: 'BCDEF2345G',
+                    paidLeaveAllowed: 18,
+                    paidLeaveTaken: 5,
+                    unpaidLeave: 1,
+                    prepayment: 8000,
+                    code: 'PS-654321',
+                    status: 'Active'
+                }
+            ];
+            localStorage.setItem('hr_employees', JSON.stringify(employees));
+        }
+
+        if (notifications.length === 0) {
+            notifications = [
+                {
+                    title: 'Leave Application',
+                    message: 'Rahul Sharma applied for leave from Sep 12 to Sep 15',
+                    date: new Date().toISOString()
+                },
+                {
+                    title: 'Information Update',
+                    message: 'Priya Singh updated her contact information',
+                    date: new Date(Date.now() - 86400000).toISOString() // 1 day ago
+                }
+            ];
+            localStorage.setItem('hr_notifications', JSON.stringify(notifications));
+        }
+
+        if (prepaymentRequests.length === 0) {
+            prepaymentRequests = [
+                {
+                    employeeName: 'Rahul Sharma',
+                    employeeCode: 'RS-123456',
+                    department: 'Development',
+                    position: 'Software Engineer',
+                    amount: 5000,
+                    date: new Date().toISOString()
+                }
+            ];
+            localStorage.setItem('hr_prepayment_requests', JSON.stringify(prepaymentRequests));
+        }
+
+        if (activities.length === 0) {
+            activities = [
+                {
+                    message: 'Priya Singh updated her contact information',
+                    date: new Date(Date.now() - 86400000).toISOString()
+                },
+                {
+                    message: 'Rahul Sharma applied for leave',
+                    date: new Date().toISOString()
+                }
+            ];
+            localStorage.setItem('hr_activities', JSON.stringify(activities));
+        }
+    </script>
+</body>
+</html>
