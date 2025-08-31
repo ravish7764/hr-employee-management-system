@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Select Role</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .role-container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+            padding: 60px 40px;
+            text-align: center;
+            width: 350px;
+        }
+        .role-container h2 {
+            color: #2575fc;
+            margin-bottom: 25px;
+            font-size: 28px;
+        }
+        .role-btn {
+            display: block;
+            width: 100%;
+            padding: 16px;
+            margin-bottom: 18px;
+            border: none;
+            border-radius: 8px;
+            background: linear-gradient(to right, #6a11cb, #2575fc);
+            color: white;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: opacity 0.3s;
+        }
+        .role-btn:last-child {
+            margin-bottom: 0;
+        }
+        .role-btn:hover {
+            opacity: 0.9;
+        }
+    </style>
+</head>
+<body>
+    <div class="role-container">
+        <h2>Welcome to HR Employee Management</h2>
+        <button class="role-btn" onclick="location.href='auth (5).html'">
+            <i class="fa-solid fa-user-tie"></i> HR
+        </button>
+        <button class="role-btn" onclick="location.href='employee-login.html'">
+            <i class="fa-solid fa-user"></i> Employee
+        </button>
+    </div>
+</body>
+</html>
