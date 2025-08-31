@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Employee Login</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+            width: 360px;
+            padding: 40px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        h2 {
+            color: #2575fc;
+            margin-bottom: 20px;
+            font-size: 24px;
+        }
+        .form-group {
+            margin-bottom: 20px;
+            text-align: left;
+            position: relative;
+        }
+        label {
+            font-size: 14px;
+            color: #555;
+            display: block;
+            margin-bottom: 6px;
+            font-weight: 500;
+        }
+        input {
+            width: 100%;
+            padding: 12px 40px 12px 12px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            box-sizing: border-box;
+            transition: border-color 0.3s;
+        }
+        input:focus {
+            border-color: #6a11cb;
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(106, 17, 203, 0.2);
+        }
+        .input-icon {
+            position: absolute;
+            right: 12px;
+            top: 38px;
+            color: #6a11cb;
+        }
+        .submit-btn {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(to right, #6a11cb, #2575fc);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 10px;
+        }
+        .submit-btn:hover {
+            opacity: 0.9;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+        .forgot-password {
+            display: block;
+            text-align: right;
+            margin-top: 10px;
+            font-size: 14px;
+            color: #6a11cb;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+        .forgot-password:hover {
+            color: #2575fc;
+            text-decoration: underline;
+        }
+        .notification {
+            display: none;
+            margin-bottom: 18px;
+            padding: 12px;
+            border-radius: 8px;
+            text-align: center;
+        }
+        .notification.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .notification.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        .modal-content {
+            background-color: white;
+            padding: 30px;
+            border-radius: 15px;
+            width: 350px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+            text-align: center;
+        }
+        .modal h3 {
+            color: #2575fc;
+            margin-bottom: 15px;
+        }
+        .modal p {
+            color: #555;
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+        .modal-close {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: none;
+            border: none;
+            font-size: 20px;
+            cursor: pointer;
+            color: #6a11cb;
+        }
+        .modal-btn {
+            padding: 10px 20px;
+            background: linear-gradient(to right, #6a11cb, #2575fc);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: opacity 0.3s;
+        }
+        .modal-btn:hover {
+            opacity: 0.9;
+        }
+        .password-toggle {
+            position: absolute;
+            right: 12px;
+            top: 38px;
+            cursor: pointer;
+            color: #6a11cb;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Employee Login</h2>
+        <div class="notification" id="employee-login-notification"></div>
+        <form id="employee-login-form">
+            <div class="form-group">
+                <label for="employee-code">Employee Code</label>
+                <input type="text" id="employee-code" placeholder="Enter Your Unique Code" required>
+                <i class="fas fa-user input-icon"></i>
+            </div>
+            <div class="form-group">
+                <label for="employee-password">Password</label>
+                <input type="password" id="employee-password" placeholder="Password" required>
+                <i class="fas fa-lock input-icon"></i>
+                <span class="password-toggle" id="password-toggle">
+                    <i class="fas fa-eye"></i>
+                </span>
+            </div>
+            <a href="#" class="forgot-password" id="forgot-password-link">Forgot Password?</a>
+            <button type="submit" class="submit-btn">Log in</button>
+        </form>
+    </div>
+
+    <!-- Forgot Password Modal -->
+    <div class="modal" id="forgot-password-modal">
+        <div class="modal-content">
+            <button class="modal-close" id="modal-close">&times;</button>
+            <h3>Reset Your Password</h3>
+            <p>Enter your employee code and we'll send you a password reset link.</p>
+            <div class="form-group">
+                <input type="text" id="reset-employee-code" placeholder="Enter Your Employee Code">
+                <i class="fas fa-user input-icon"></i>
+            </div>
+            <button class="modal-btn" id="send-reset-link">Send Reset Link</button>
+        </div>
+    </div>
+
+    <script>
+        // Login form submission
+        document.getElementById('employee-login-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const code = document.getElementById('employee-code').value;
+            const password = document.getElementById('employee-password').value;
+            showNotification('employee-login-notification', 'Logging in...', 'success');
+            
+            // Simulate API call
+            setTimeout(() => {
+                showNotification('employee-login-notification', 'Login successful! Redirecting...', 'success');
+            }, 1000);
+        });
+
+        // Forgot password modal
+        document.getElementById('forgot-password-link').addEventListener('click', function(e) {
+            e.preventDefault();
+            document.getElementById('forgot-password-modal').style.display = 'flex';
+        });
+
+        // Close modal
+        document.getElementById('modal-close').addEventListener('click', function() {
+            document.getElementById('forgot-password-modal').style.display = 'none';
+        });
+
+        // Send reset link
+        document.getElementById('send-reset-link').addEventListener('click', function() {
+            const code = document.getElementById('reset-employee-code').value;
+            if (code) {
+                showNotification('employee-login-notification', 'Password reset link sent to your email!', 'success');
+                document.getElementById('forgot-password-modal').style.display = 'none';
+            } else {
+                alert('Please enter your employee code');
+            }
+        });
+
+        // Password visibility toggle
+        document.getElementById('password-toggle').addEventListener('click', function() {
+            const passwordInput = document.getElementById('employee-password');
+            const eyeIcon = this.querySelector('i');
+            
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                eyeIcon.classList.remove('fa-eye');
+                eyeIcon.classList.add('fa-eye-slash');
+            } else {
+                passwordInput.type = 'password';
+                eyeIcon.classList.remove('fa-eye-slash');
+                eyeIcon.classList.add('fa-eye');
+            }
+        });
+
+        // Close modal if clicked outside
+        window.addEventListener('click', function(e) {
+            const modal = document.getElementById('forgot-password-modal');
+            if (e.target === modal) {
+                modal.style.display = 'none';
+            }
+        });
+
+        function showNotification(elementId, message, type) {
+            const notification = document.getElementById(elementId);
+            notification.textContent = message;
+            notification.className = 'notification ' + type;
+            notification.style.display = 'block';
+            setTimeout(() => {
+                notification.style.display = 'none';
+            }, 5000);
+        }
+    </script>
+</body>
+</html>
